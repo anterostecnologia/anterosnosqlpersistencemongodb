@@ -3,6 +3,7 @@ package br.com.anteros.nosql.persistence.mongodb.session;
 import java.util.List;
 
 import org.bson.Document;
+import org.bson.types.ObjectId;
 
 import br.com.anteros.core.utils.Assert;
 import br.com.anteros.nosql.persistence.metadata.NoSQLDescriptionEntity;
@@ -61,6 +62,17 @@ public class EntityOperations {
 
 	public String determineEntityCollectionName(Object obj) {
 		return null == obj ? null : determineCollectionName(obj.getClass());
+	}
+
+	public Object convertIdProperty(Class<?> entityClass, Object id) {
+		NoSQLDescriptionEntity descriptionEntity = descriptionEntityManager.getDescriptionEntity(entityClass);
+
+		if (descriptionEntity != null && descriptionEntity.getDescriptionIdField() != null) {
+			if (descriptionEntity.getDescriptionIdField().getRealType().equals(String.class)){
+				return new ObjectId((String)id);
+			}
+		}
+		return id;
 	}
 
 }

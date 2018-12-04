@@ -1041,8 +1041,9 @@ public class SimpleMongoSession implements MongoSession {
 		Assert.notNull(collectionName, "CollectionName must not be null!");
 
 		String idKey = operations.getIdPropertyName(entityClass);
+		Object newId = operations.convertIdProperty(entityClass,id);
 
-		return doFindOne(collectionName, new Document(idKey, id), new Document(), entityClass);
+		return doFindOne(collectionName, new Document(idKey, newId), new Document(), entityClass);
 	}
 
 	/* (non-Javadoc)

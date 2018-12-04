@@ -18,7 +18,7 @@ public class MongoTransaction extends AbstractNoSQLTransaction {
 
 	public MongoTransaction(NoSQLConnection connection, NoSQLPersistenceContext context) {
 		super(connection, context);
-		//this.clientSession = ((MongoConnection)connection).getSession(ClientSessionOptions.builder().causallyConsistent(true).build());
+//		this.clientSession = ((MongoConnection)connection).getSession(ClientSessionOptions.builder().causallyConsistent(true).build());
 	}
 
 	@Override

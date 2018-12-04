@@ -16,7 +16,7 @@ import br.com.anteros.nosql.persistence.session.NoSQLMappedDocument;
 import br.com.anteros.nosql.persistence.session.mapping.AbstractNoSQLObjectMapper;
 import br.com.anteros.nosql.persistence.session.query.NoSQLQuery;
 
-public class MongoEntityAdapter<T> implements NoSQLEntityAdapter<T>{
+public class MongoEntityAdapter<T> implements NoSQLEntityAdapter<T> {
 
 	private T entity;
 	private NoSQLDescriptionEntity descriptionEntity;
@@ -27,9 +27,10 @@ public class MongoEntityAdapter<T> implements NoSQLEntityAdapter<T>{
 		this.descriptionEntity = descriptionEntity;
 		this.mapper = mapper;
 	}
-	
-	public static <T,Q> MongoEntityAdapter<T> of(T entity, NoSQLDescriptionEntity descriptionEntity,AbstractNoSQLObjectMapper mapper) {
-		return new MongoEntityAdapter<>(entity,descriptionEntity,mapper);
+
+	public static <T, Q> MongoEntityAdapter<T> of(T entity, NoSQLDescriptionEntity descriptionEntity,
+			AbstractNoSQLObjectMapper mapper) {
+		return new MongoEntityAdapter<>(entity, descriptionEntity, mapper);
 	}
 
 	@Override
@@ -56,14 +57,15 @@ public class MongoEntityAdapter<T> implements NoSQLEntityAdapter<T>{
 		NoSQLDescriptionField descriptionIdField = descriptionEntity.getDescriptionIdField();
 		NoSQLDescriptionField descriptionVersionField = descriptionEntity.getDescriptionVersionField();
 
-		return MongoQuery.of(MongoCriteria.where(descriptionIdField.getName()).is(descriptionIdField.getObjectValue(entity))//
-				.and(descriptionVersionField.getName()).is(descriptionVersionField.getObjectValue(entity)));
+		return MongoQuery
+				.of(MongoCriteria.where(descriptionIdField.getName()).is(descriptionIdField.getObjectValue(entity))//
+						.and(descriptionVersionField.getName()).is(descriptionVersionField.getObjectValue(entity)));
 	}
 
 	@Override
 	public NoSQLMappedDocument toMappedDocument() {
 		final LinkedHashMap<Object, Object> involvedObjects = new LinkedHashMap<Object, Object>();
-		final Document dbDoc = ((MongoObjectMapper)mapper).toDocument(ProxyHelper.unwrap(entity), involvedObjects);
+		final Document dbDoc = ((MongoObjectMapper) mapper).toDocument(ProxyHelper.unwrap(entity), involvedObjects);
 		return MongoMappedDocument.of(dbDoc);
 	}
 
@@ -72,7 +74,6 @@ public class MongoEntityAdapter<T> implements NoSQLEntityAdapter<T>{
 		Number version = (Number) descriptionEntity.getVersionValue(entity);
 		return version;
 	}
-
 
 	@Override
 	public T getEntity() {
@@ -99,10 +100,12 @@ public class MongoEntityAdapter<T> implements NoSQLEntityAdapter<T>{
 		if (idProperty.getObjectValue(bean) != null) {
 			return bean;
 		}
-		
+
 		Object newId = id;
-		if (id instanceof ObjectId) {
-			newId = ((ObjectId)id).toString();
+		if (!idProperty.getField().getType().equals(ObjectId.class)) {
+			if (id instanceof ObjectId) {
+				newId = ((ObjectId) id).toString();
+			}
 		}
 
 		idProperty.setObjectValue(bean, newId);
@@ -119,7 +122,7 @@ public class MongoEntityAdapter<T> implements NoSQLEntityAdapter<T>{
 	@Override
 	public T incrementVersion() {
 		Number version = (Number) getVersion();
-		version = version == null?0:version.longValue()+1;
+		version = version == null ? 0 : version.longValue() + 1;
 		NoSQLDescriptionField descriptionVersionField = descriptionEntity.getDescriptionVersionField();
 		descriptionVersionField.setObjectValue(entity, version);
 		return entity;
