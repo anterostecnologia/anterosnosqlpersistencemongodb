@@ -1,6 +1,7 @@
 package br.com.anteros.nosql.persistence.mongodb.session;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -1569,7 +1570,7 @@ public class SimpleMongoSession implements MongoSession {
 					while (cursor.hasNext()) {
 						ids.add(MongoMappedDocument.of(cursor.next()).getId());
 					}
-
+					cursor.close();
 					removeQuery = MongoMappedDocument.getIdIn(ids);
 				}
 
@@ -2382,7 +2383,7 @@ public class SimpleMongoSession implements MongoSession {
 
 		String func = function;
 		if (ResourceUtils.isUrl(function)) {
-			InputStream resourceAsStream;
+			InputStream resourceAsStream=null;
 			try {
 				resourceAsStream = ResourceUtils.getResourceAsStream(function);
 				if (resourceAsStream != null) {
@@ -2395,9 +2396,17 @@ public class SimpleMongoSession implements MongoSession {
 							scanner.close();
 						}
 					}
+					
 				}
-			} catch (FileNotFoundException e1) {
+			} catch (Exception e1) {
 				e1.printStackTrace();
+			} finally {
+				if (resourceAsStream !=null) {
+					try {
+						resourceAsStream.close();
+					} catch (IOException e) {
+					}
+				}
 			}
 		}
 

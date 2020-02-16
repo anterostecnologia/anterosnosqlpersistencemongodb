@@ -153,8 +153,10 @@ public abstract class AbstractMongodbQuery<K, Q extends AbstractMongodbQuery<K, 
             for (DBObject obj : cursor) {
                 ids.add(obj.get("_id"));
             }
+            cursor.close();
             return ids;
         } else {
+        	cursor.close();
             return Collections.emptyList();
         }
     }
@@ -233,6 +235,7 @@ public abstract class AbstractMongodbQuery<K, Q extends AbstractMongodbQuery<K, 
 
             @Override
             public void close() {
+            	cursor.close();
             }
         };
     }
@@ -256,6 +259,7 @@ public abstract class AbstractMongodbQuery<K, Q extends AbstractMongodbQuery<K, 
             for (DBObject dbObject : cursor) {
                 results.add(transformer.apply(dbObject));
             }
+            cursor.close();
             return results;
         } catch (NoResults ex) {
             return Collections.emptyList();
@@ -317,8 +321,11 @@ public abstract class AbstractMongodbQuery<K, Q extends AbstractMongodbQuery<K, 
         try {
             DBCursor c = createCursor().limit(1);
             if (c.hasNext()) {
-                return transformer.apply(c.next());
+                K apply = transformer.apply(c.next());
+                c.close();
+                return apply;
             } else {
+            	c.close();
                 return null;
             }
         } catch (NoResults ex) {
@@ -348,10 +355,14 @@ public abstract class AbstractMongodbQuery<K, Q extends AbstractMongodbQuery<K, 
             if (c.hasNext()) {
                 K rv = transformer.apply(c.next());
                 if (c.hasNext()) {
+                	c.close();
                     throw new NonUniqueResultException();
+                } else {
+                	c.close();
                 }
                 return rv;
             } else {
+            	c.close();
                 return null;
             }
         } catch (NoResults ex) {
