@@ -2091,8 +2091,6 @@ public class SimpleMongoSession implements MongoSession {
 
 		public T doWith(Document document) {
 
-			System.out.println(document);
-
 			try {
 				if (null != document) {
 					maybeEmitEvent(new MongoAfterLoadEvent(document, entityClass, collectionName));
