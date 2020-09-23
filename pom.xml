@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>br.com.anteros</groupId>
 	<artifactId>Anteros-NoSql-Persistence-MongoDB</artifactId>
-	<version>1.0.5</version>
+	<version>1.0.6</version>
 
 	<properties>
 		<java.versao>1.8</java.versao>
@@ -58,7 +58,7 @@
 		<dependency>
 			<groupId>br.com.anteros</groupId>
 			<artifactId>Anteros-NoSql-Persistence</artifactId>
-			<version>[1.0.0,)</version>
+			<version>[1.0.7,)</version>
 		</dependency>
 		<dependency>
 			<groupId>org.mongodb</groupId>
